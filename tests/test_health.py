@@ -1,9 +1,15 @@
-from robin.config import RobinConfig
+from robin.config import RobinConfig, RobinPaths
 from robin.health import check_health
 
 
 def test_foundation_health_is_ok(tmp_path) -> None:
-    config = RobinConfig(paths=RobinConfig().paths)
+    paths = RobinPaths(
+        root=tmp_path / "robin",
+        data=tmp_path / "robin" / "data",
+        logs=tmp_path / "robin" / "logs",
+        usb=tmp_path / "robin" / "usb",
+    )
+    config = RobinConfig(paths=paths)
     config.ensure_directories()
     report = check_health(config)
     assert report.ok
