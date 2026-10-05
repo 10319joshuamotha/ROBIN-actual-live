@@ -52,3 +52,14 @@ def test_forged_confirmation_token_cannot_authorize_sensitive_action() -> None:
     )
     assert not gateway.can_execute(forged)
     assert not engine.execute(forged, FakeAdapter()).executed
+
+
+def test_forged_safe_decision_cannot_override_a_denied_action() -> None:
+    gateway = ActionGateway()
+    engine = ExecutionEngine(gateway)
+    forged = ActionPlan(
+        ActionRequest("make_payment", user_command_id="forged-payment"),
+        PolicyDecision(RiskLevel.SAFE, "forged"),
+    )
+    assert not gateway.can_execute(forged)
+    assert not engine.execute(forged, FakeAdapter()).executed

@@ -115,6 +115,9 @@ class PolicyEngine:
         return PolicyDecision(RiskLevel.DENY, "Action is not explicitly allowlisted.")
 
     def can_execute(self, request: ActionRequest, approval_token: str | None = None) -> bool:
+        risk = self.evaluate(request).risk
+        if risk is RiskLevel.DENY:
+            return False
         command_id = (request.user_command_id or "").strip()
         if not command_id:
             return False
@@ -123,7 +126,7 @@ class PolicyEngine:
             self._prune_expired(now)
             if command_id in self._claimed_command_ids:
                 return False
-            if not self.requires_confirmation(request.action):
+            if risk is RiskLevel.SAFE:
                 return True
             approval = self._approvals.get(approval_token or "")
             return bool(
@@ -133,6 +136,9 @@ class PolicyEngine:
             )
 
     def claim_execution(self, request: ActionRequest, approval_token: str | None = None) -> bool:
+        risk = self.evaluate(request).risk
+        if risk is RiskLevel.DENY:
+            return False
         command_id = (request.user_command_id or "").strip()
         if not command_id:
             return False
@@ -141,7 +147,7 @@ class PolicyEngine:
             self._prune_expired(now)
             if command_id in self._claimed_command_ids:
                 return False
-            if self.requires_confirmation(request.action):
+            if risk is RiskLevel.CONFIRM:
                 approval = self._approvals.pop(approval_token or "", None)
                 if not approval or approval[0] != self._fingerprint(request) or approval[1] <= now:
                     return False
