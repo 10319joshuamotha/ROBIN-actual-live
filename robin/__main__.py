@@ -1,19 +1,18 @@
-from __future__ import annotations
-
 from .config import RobinConfig
-from .lifecycle import Lifecycle
-from .logging import configure_logging
+from .core.health import check
+from .runtime import RobinRuntime
 
 
 def main() -> None:
     config = RobinConfig()
-    config.ensure_directories()
-    logger = configure_logging(config.paths.logs)
+    health = check(config)
+    if not health.ok:
+        raise SystemExit("ROBIN foundation health check failed")
 
-    lifecycle = Lifecycle()
-    lifecycle.start()
-    logger.info("ROBIN foundation online; state=%s", lifecycle.state.value)
-    print(f"ROBIN {config.version} | state={lifecycle.state.value}")
+    runtime = RobinRuntime(config)
+    result = runtime.start()
+    print(result.message)
+    print(f"State: {result.state.value}")
 
 
 if __name__ == "__main__":
