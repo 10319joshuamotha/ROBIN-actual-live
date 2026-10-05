@@ -25,6 +25,6 @@ class ExecutionEngine:
         self.gateway = gateway or ActionGateway()
 
     def execute(self, plan: ActionPlan, adapter: ActionAdapter) -> ExecutionResult:
-        if not self.gateway.can_execute(plan):
+        if not self.gateway.claim_for_execution(plan):
             return ExecutionResult(False, "Action was not approved for execution.")
         return ExecutionResult(True, adapter.execute(plan))

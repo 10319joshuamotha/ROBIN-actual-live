@@ -37,10 +37,12 @@ class ActionGateway:
         decision = self.policy.approve(plan.request, user_confirmed=user_confirmed)
         return ActionPlan(plan.request, decision)
 
-    @staticmethod
-    def can_execute(plan: ActionPlan) -> bool:
-        if plan.decision.risk is not RiskLevel.SAFE or not plan.request.user_command_id:
+    def can_execute(self, plan: ActionPlan) -> bool:
+        if plan.decision.risk is not RiskLevel.SAFE:
             return False
-        if PolicyEngine.requires_confirmation(plan.request.action):
-            return bool(plan.decision.approval_token)
-        return True
+        return self.policy.can_execute(plan.request, plan.decision.approval_token)
+
+    def claim_for_execution(self, plan: ActionPlan) -> bool:
+        if plan.decision.risk is not RiskLevel.SAFE:
+            return False
+        return self.policy.claim_execution(plan.request, plan.decision.approval_token)

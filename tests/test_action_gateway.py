@@ -26,15 +26,17 @@ def test_sensitive_action_requires_user_confirmation() -> None:
 
 
 def test_actions_without_a_user_command_are_denied() -> None:
-    plan = ActionGateway().plan("open_application", "calculator")
+    gateway = ActionGateway()
+    plan = gateway.plan("open_application", "calculator")
     assert plan.decision.risk is RiskLevel.DENY
-    assert not ActionGateway.can_execute(plan)
+    assert not gateway.can_execute(plan)
 
 
 def test_unknown_actions_fail_closed() -> None:
-    plan = ActionGateway().plan("run_arbitrary_shell", user_command_id="command-3")
+    gateway = ActionGateway()
+    plan = gateway.plan("run_arbitrary_shell", user_command_id="command-3")
     assert plan.decision.risk is RiskLevel.DENY
-    assert not ActionGateway.can_execute(plan)
+    assert not gateway.can_execute(plan)
 
 
 def test_financial_actions_are_hard_denied() -> None:
@@ -53,3 +55,9 @@ def test_bulk_gallery_access_is_denied_and_single_item_requires_confirmation() -
     selected = gateway.plan("view_selected_photo", "photo-1", user_command_id="command-6")
     assert selected.decision.risk is RiskLevel.CONFIRM
     assert not gateway.can_execute(selected)
+
+
+def test_application_resource_is_allowlisted_separately_from_action_name() -> None:
+    gateway = ActionGateway()
+    assert gateway.plan("open_application", "calculator", user_command_id="command-7").decision.risk is RiskLevel.SAFE
+    assert gateway.plan("open_application", "powershell", user_command_id="command-8").decision.risk is RiskLevel.DENY
