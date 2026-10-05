@@ -7,7 +7,7 @@ name = "robin-assistant"
 version = "0.1.0"
 description = "ROBIN personal assistant foundation"
 requires-python = ">=3.11"
-dependencies = []
+dependencies = ["cryptography>=44"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8"]

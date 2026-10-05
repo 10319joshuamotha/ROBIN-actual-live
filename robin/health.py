@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from .config import RobinConfig
-from .storage import StorageLayout, StorageManager
+from .storage import StorageManager
 
 
 @dataclass(frozen=True)
@@ -17,17 +17,16 @@ class HealthReport:
 
     @property
     def ok(self) -> bool:
-        return all((self.config_ok, self.data_path, self.log_path, self.usb_path))
+        return self.config_ok and self.data_path and self.log_path
 
 
 def check_health(config: RobinConfig) -> HealthReport:
+    config.ensure_directories()
     paths = config.paths
-    layout = StorageLayout(paths.data, paths.usb)
-    StorageManager(layout)
     return HealthReport(
         config_ok=True,
         data_path=Path(paths.data).is_dir(),
         log_path=Path(paths.logs).is_dir(),
-        usb_path=Path(paths.usb).is_dir(),
-        storage_model="local-runtime-plus-portable-master-backup",
+        usb_path=bool(paths.usb and paths.usb.is_dir() and StorageManager.is_removable_drive(paths.usb)),
+        storage_model="local-first-with-encrypted-removable-backup",
     )
