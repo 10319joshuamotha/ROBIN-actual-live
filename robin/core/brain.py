@@ -28,7 +28,7 @@ class Brain:
             IntentType.WAKE: "ROBIN is ready.",
             IntentType.STATUS: "ROBIN status requested.",
             IntentType.HEALTH: "ROBIN health requested.",
-            IntentType.CONVERSATION: "Conversation received; no model provider is configured.",
+            IntentType.CONVERSATION: "Model provider not configured.",
             IntentType.UNKNOWN: "I need a clearer instruction.",
         }
         return BrainDecision(intent, responses[intent.kind])
