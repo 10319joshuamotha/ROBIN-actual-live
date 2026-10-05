@@ -29,22 +29,26 @@ ROBIN
 └── tests/         automated tests
 ```
 
-## Milestone 1
+## Milestone 1 — foundation
 
-This milestone establishes the foundation only. It does **not** claim that Windows automation, Android control, voice, vision, payments, gallery access, calling, or self-upgrading are implemented yet.
+The repository now contains the deterministic foundation and its automated tests. It does **not** claim that Windows automation, Android control, voice, vision, payments, gallery access, calling, or production self-upgrading are implemented yet.
 
 Implemented foundation:
 
 - typed application configuration
 - structured logging
 - lifecycle state machine
-- safe action/policy boundary
+- sleep state with `ESC` wake contract
+- deterministic command and intent boundaries
+- provider-neutral brain shell
+- safe action/policy gateway
 - approval token abstraction
-- persistent memory interface
+- persistent local memory interface
 - skill/upgrade proposal boundary
-- USB storage contract
+- local-runtime + portable-master-backup storage contract
 - health/status reporting
-- testable package layout
+- automated tests
+- CI workflow for Python 3.11–3.13
 
 ## Development
 
