@@ -61,13 +61,8 @@ class PolicyEngine:
         "upload_file",
         "close_application",
     }
-    SAFE_ACTIONS = {
-        "open_application",
-        "open_url",
-        "status",
-        "health",
-        "set_local_reminder",
-    }
+    SAFE_APPLICATIONS = {"calculator", "notepad", "file explorer"}
+    SAFE_ACTIONS = {"open_application", "status", "health"}
 
     @staticmethod
     def _normalize(action: str) -> str:
@@ -90,6 +85,10 @@ class PolicyEngine:
             return PolicyDecision(RiskLevel.DENY, "Bulk gallery access is blocked; only a specifically selected item may be requested.")
         if self.requires_confirmation(action):
             return PolicyDecision(RiskLevel.CONFIRM, "Explicit user approval is required for this sensitive action.")
+        if action == "open_application":
+            app = " ".join(request.resource.strip().casefold().split())
+            if app not in self.SAFE_APPLICATIONS:
+                return PolicyDecision(RiskLevel.DENY, "That application is not explicitly allowlisted.")
         if action in self.SAFE_ACTIONS:
             return PolicyDecision(RiskLevel.SAFE, "Action is explicitly allowlisted and bound to a user command.")
         return PolicyDecision(RiskLevel.DENY, "Action is not explicitly allowlisted.")
