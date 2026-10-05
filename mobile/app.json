@@ -1,0 +1,28 @@
+{
+  "expo": {
+    "name": "ROBIN Companion",
+    "slug": "robin-companion",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "robin-companion",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/images/icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#f2efe6"
+    },
+    "ios": {
+      "supportsTablet": false
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/icon.png",
+        "backgroundColor": "#f2efe6"
+      }
+    },
+    "plugins": [
+      "expo-router"
+    ]
+  }
+}
